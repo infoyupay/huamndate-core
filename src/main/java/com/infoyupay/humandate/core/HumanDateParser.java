@@ -24,6 +24,37 @@ import java.util.function.Function;
 
 import static com.infoyupay.humandate.core.ParserUtils.*;
 
+/**
+ * A human-friendly date parser that recognizes lightweight and intuitive
+ * textual representations of calendar dates.
+ * <p>
+ * This parser focuses on pragmatic patterns commonly used in everyday typing,
+ * without requiring strict ISO formats or full localization. It delegates all
+ * conversion logic to {@link ParserUtils}, and only decides which parsing rule
+ * to apply based on regular expression detection.
+ * <p>
+ * Supported categories include:
+ * <ul>
+ *   <li>Standalone day values (e.g., "7", "31")</li>
+ *   <li>Day-month with a separator (e.g., "7/12", "01-1")</li>
+ *   <li>Day-month-year with a separator (e.g., "7/12/25", "7-12-2025")</li>
+ *   <li>Compact formats without separators (ddMM, ddMMyy/yyyy)</li>
+ *   <li>Relative offsets: +N / -N days (e.g., "+3", "-10")</li>
+ *   <li>Keywords referring to today (e.g., "hoy", "today", "now", "ahora", "ya")</li>
+ * </ul>
+ * <p>
+ * Year interpretation uses a small pivot rule:
+ * if a year is provided with only 1–2 digits, it is assumed to be 20xx.
+ * Four-digit years are preserved.
+ * <p>
+ * If the input does not match any known pattern, {@code null} is returned.
+ * A richer error model may be introduced in future versions.
+ *
+ * @author David Vidal, Infoyupay
+ * @version 1.0
+ * @see ParserUtils
+ * @see java.time.LocalDate
+ */
 public class HumanDateParser implements Function<String, LocalDate> {
     @Override
     public LocalDate apply(String string) {
@@ -83,7 +114,7 @@ public class HumanDateParser implements Function<String, LocalDate> {
         /*
          * === Day-Month-Year with separator ===
          * Format: d/M/y (year: 1 to 4 digits)
-         * Year semantics resolved later (e.g. pivot for 1–2 digits → 20xx)
+         * Year semantics resolved later (e.g., pivot for 1–2 digits → 20xx)
          *
          * Examples: "7/12/25", "7-12-2025", "01.1.5"
          */
