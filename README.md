@@ -53,7 +53,7 @@ Contributions and suggestions are very welcome ✨
 ## License
 
 Released under the **Apache License, Version 2.0**.  
-See the [Apache License, Version 2.0](./LICENSE-2.0.txt) for full details.
+See the [Apache License, Version 2.0](./LICENSE.txt) for full details.
 
 ---
 
