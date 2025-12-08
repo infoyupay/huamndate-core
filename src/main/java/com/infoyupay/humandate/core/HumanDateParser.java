@@ -68,11 +68,13 @@ public class HumanDateParser implements Function<String, LocalDate> {
          * inside other words (e.g., "playa").
          *
          * Examples: "hoy", "today", "now", "ahora", "ya", "0", "+0", "-0"
+         *Today keywords: allow whitespace and punctuation around token
          */
-        if (_string.matches("(?i)(^|\\b)(hoy|today|now|ahora|ya)(\\b|$)")
+        if (_string.matches("(?i)^\\s*\\p{Punct}*(hoy|today|now|ahora|ya)\\p{Punct}*\\s*$")
                 || _string.matches("0|-0|\\+0")) {
             return LocalDate.now();
         }
+
 
         /*
          * === Day offset (positive) ===
