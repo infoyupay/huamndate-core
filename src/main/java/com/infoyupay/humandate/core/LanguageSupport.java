@@ -67,8 +67,10 @@ import java.util.Map;
  * </p>
  *
  * <p>
- * LanguageSupport instances can be freely combined. If multiple languages
- * define the same unit letter, the first registered one takes precedence.
+ * A HumanDateParser instance is typically configured with a single
+ * LanguageSupport at a time. If you need multi-language behavior,
+ * consider implementing a composite LanguageSupport that merges
+ * several languages explicitly and resolves any conflicts.
  * </p>
  *
  * @author David Vidal, Infoyupay
