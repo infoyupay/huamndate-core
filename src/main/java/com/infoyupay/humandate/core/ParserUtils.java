@@ -98,7 +98,7 @@ public final class ParserUtils {
      * 3-digit years are currently unsupported by design.
      * <p>
      * Pivot rule:
-     * - If year < 100 → assume 20xx
+     * - If year &lt; 100 → assume 20xx
      * <p>
      * Examples:
      * "7/12/25"   -> 2025-12-07
