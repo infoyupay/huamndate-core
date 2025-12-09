@@ -27,6 +27,15 @@ import static com.infoyupay.humandate.core.ParserUtils.*;
 /**
  * A human-friendly date parser that recognizes lightweight and intuitive
  * textual representations of calendar dates.
+ * <br>
+ * HumanDateParser provides ergonomic date input by allowing fast keyboard-friendly
+ * formats and localized shortcuts for "today" and relative date arithmetic.
+ * <p>
+ * For expressions using relative offsets, such as {@code +2d} or {@code -1m},
+ * this parser relies on the configured {@link LanguageSupport} instances to supply the
+ * unit letters that correspond to calendar-based time units:
+ * days, weeks, months and years.
+ * </p>
  * <p>
  * This parser focuses on pragmatic patterns commonly used in everyday typing,
  * without requiring strict ISO formats or full localization. It delegates all
