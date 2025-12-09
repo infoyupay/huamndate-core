@@ -78,6 +78,25 @@ fun generateChecksum(file: File, algorithm: String): String {
     return digest.digest().joinToString("") { "%02x".format(it) }
 }
 
+tasks.register("renamePom") {
+    dependsOn(tasks.named("publishToMavenLocal"))
+
+    doLast {
+        val pubDir = layout.buildDirectory.dir("publications/mavenJava").get().asFile
+        val pomDefault = File(pubDir, "pom-default.xml")
+
+        if (!pomDefault.exists()) {
+            throw GradleException("Expected pom-default.xml not found in $pubDir")
+        }
+
+        val newPomName = "humandate-core-${project.version}.pom"
+        val renamed = File(pubDir, newPomName)
+
+        pomDefault.copyTo(renamed, overwrite = true)
+        pomDefault.delete()
+    }
+}
+
 tasks.register("generateChecksums") {
     dependsOn(tasks.named("publishToMavenLocal"))
 
@@ -95,6 +114,9 @@ tasks.register("generateChecksums") {
             }
         }
     }
+}
+tasks.named("generateChecksums") {
+    dependsOn("renamePom")
 }
 tasks.register<Zip>("releaseZip") {
     group = "distribution"
