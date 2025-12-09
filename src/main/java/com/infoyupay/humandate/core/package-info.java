@@ -17,7 +17,41 @@
  *  with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 /**
- * TODO: write documentation.
+ * Core components of the HumanDate project.<br>
+ * <br>
+ * This package provides the fundamental building blocks for parsing and
+ * formatting human-friendly date expressions. It includes:
+ * <ul>
+ *   <li>{@code HumanDateParser}: transforms short forms, relative offsets, and
+ *       language-specific keywords into {@code LocalDate}</li>
+ *   <li>{@code HumanDateFormatter}: produces localized and natural output for
+ *       user-visible dates</li>
+ *   <li>{@code LanguageSupport}: pluggable interface to provide idioms,
+ *       keywords, and rules for each supported language</li>
+ *   <li>{@code Languages}: factory for getting built-in language providers
+ *       without exposing implementation classes</li>
+ * </ul>
+ * <br>
+ * Design characteristics:
+ * <ul>
+ *   <li>Thread-safe and immutable components for predictable usage</li>
+ *   <li>No implicit fallbacks: unrecognized expressions return {@code null}</li>
+ *   <li>No I/O or system-wide state modifications</li>
+ *   <li>Processing rules validated through full unit test coverage</li>
+ * </ul>
+ * <br>
+ * Typical usage:
+ * <ol>
+ *   <li>Create a parser via {@code new HumanDateParser()}</li>
+ *   <li>Optionally set a language using {@code setLanguage(...)} to enable
+ *       localized keyword parsing</li>
+ *   <li>Call {@code apply(...)} with a user input string to obtain a
+ *       {@code LocalDate} or {@code null}</li>
+ *   <li>Use {@code HumanDateFormatter} for user-visible representation</li>
+ * </ol>
+ * <br>
+ * All classes in this package follow the documentation and style rules described
+ * in {@code .junie/guidelines.md}. Unit tests must accompany any change.
  *
  * @author David Vidal, Infoyupay
  * @version 1.0
