@@ -20,6 +20,8 @@
 package com.infoyupay.humandate.core;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Map;
 
 /**
  * Utility class providing low-level parsing logic for HumanDate formats.
@@ -191,5 +193,59 @@ public final class ParserUtils {
      */
     public static LocalDate parseMinusD(String string) {
         return LocalDate.now().minusDays(Integer.parseInt(string.substring(1)));
+    }
+
+    /**
+     * Parses a relative date expression using a localized time unit.
+     * <p>
+     * This method interprets strings of the form:
+     * {@code +Nd}, {@code -2w}, {@code +1m}, {@code -3y},
+     * where the leading sign ({@code +/-}) indicates direction and the
+     * trailing letter indicates the calendar unit.
+     * </p>
+     *
+     * <h4>Unit resolution</h4>
+     * <p>
+     * The provided {@code resolvedUnits} specifies how unit letters are mapped to
+     * {@link java.time.temporal.ChronoUnit}. If the letter is not present in
+     * the map, the parser falls back safely to {@link ChronoUnit#DAYS}.
+     * This ensures ergonomic behavior even when the user types an unknown or
+     * mistyped unit.
+     * </p>
+     *
+     * <h4>Base date reference</h4>
+     * <p>
+     * All offsets are calculated relative to {@link LocalDate#now()}.
+     * </p>
+     *
+     * <h4>Examples</h4>
+     * <ul>
+     *     <li>{@code +3d} → 3 days from today</li>
+     *     <li>{@code -1w} → 1 week before today</li>
+     *     <li>{@code +2m} → 2 months from today</li>
+     *     <li>{@code -5y} → 5 years before today</li>
+     *     <li>{@code +10x} → 10 days from today (fallback)</li>
+     * </ul>
+     *
+     * @param string        the relative expression, guaranteed by the caller
+     *                      to match the format {@code ^[+-]\d+[a-zA-Z]$}
+     * @param resolvedUnits a unit-resolution map provided by
+     *                      {@link com.infoyupay.humandate.core.LanguageSupport}
+     * @return a computed {@link LocalDate} relative to now
+     */
+    public static LocalDate parseOffsetWithUnit(String string, Map<String, ChronoUnit> resolvedUnits) {
+        var base = LocalDate.now();
+
+        var sign = string.charAt(0);
+        var number = string.substring(1, string.length() - 1);
+        var unitLetter = string.substring(string.length() - 1).toLowerCase();
+
+        var unit = resolvedUnits.getOrDefault(unitLetter, ChronoUnit.DAYS);
+
+        var amount = Long.parseLong(number);
+
+        return (sign == '+')
+                ? base.plus(amount, unit)
+                : base.minus(amount, unit);
     }
 }
