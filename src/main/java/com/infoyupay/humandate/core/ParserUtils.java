@@ -240,7 +240,8 @@ public final class ParserUtils {
         var number = string.substring(1, string.length() - 1);
         var unitLetter = string.substring(string.length() - 1).toLowerCase();
 
-        var unit = resolvedUnits.getOrDefault(unitLetter, ChronoUnit.DAYS);
+        var unit = resolvedUnits.get(unitLetter);
+        if (unit == null) return null;
 
         var amount = Long.parseLong(number);
 
