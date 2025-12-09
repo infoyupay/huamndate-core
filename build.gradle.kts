@@ -1,4 +1,3 @@
-import java.io.File
 import java.io.FileInputStream
 import java.security.MessageDigest
 
@@ -40,6 +39,38 @@ publishing {
     publications {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
+            pom {
+                name.set("HumanDate Core")
+                description.set("Lightweight human-friendly LocalDate parsing and formatting with multilingual support (EN/ES/QUE)")
+                url.set("https://github.com/infoyupay/humandate-core")
+
+                licenses {
+                    license {
+                        name.set("Apache License 2.0")
+                        url.set("https://www.apache.org/licenses/LICENSE-2.0.html")
+                        distribution.set("repo")
+                    }
+                }
+
+                scm {
+                    url.set("https://github.com/infoyupay/humandate-core")
+                    connection.set("scm:git:https://github.com/infoyupay/humandate-core.git")
+                    developerConnection.set("scm:git:ssh://git@github.com/infoyupay/humandate-core.git")
+                    tag.set("HEAD")
+                }
+
+                developers {
+                    developer {
+                        id.set("dvidal")
+                        name.set("David Vidal")
+                        email.set("info@infoyupay.com")
+                        url.set("https://infoyupay.com")
+                        organization.set("InfoYupay S.A.C.S.")
+                        organizationUrl.set("https://infoyupay.com")
+                    }
+                }
+            }
+
         }
     }
 }
@@ -83,17 +114,28 @@ tasks.register("renamePom") {
 
     doLast {
         val pubDir = layout.buildDirectory.dir("publications/mavenJava").get().asFile
-        val pomDefault = File(pubDir, "pom-default.xml")
 
-        if (!pomDefault.exists()) {
+        val originalPom = File(pubDir, "pom-default.xml")
+        val originalAsc = File(pubDir, "pom-default.xml.asc")
+
+        val newPom = File(pubDir, "humandate-core-${project.version}.pom")
+        val newAsc = File(pubDir, "humandate-core-${project.version}.pom.asc")
+
+        if (!originalPom.exists()) {
             throw GradleException("Expected pom-default.xml not found in $pubDir")
         }
 
-        val newPomName = "humandate-core-${project.version}.pom"
-        val renamed = File(pubDir, newPomName)
+        // Rename POM
+        originalPom.copyTo(newPom, overwrite = true)
+        originalPom.delete()
 
-        pomDefault.copyTo(renamed, overwrite = true)
-        pomDefault.delete()
+        // Rename signature (if exists)
+        if (originalAsc.exists()) {
+            originalAsc.copyTo(newAsc, overwrite = true)
+            originalAsc.delete()
+        } else {
+            logger.warn("pom-default.xml.asc not found – signature may not have been generated")
+        }
     }
 }
 
@@ -124,16 +166,21 @@ tasks.register<Zip>("releaseZip") {
 
     dependsOn("publishToMavenLocal", "generateChecksums")
 
-    from(layout.buildDirectory.dir("libs")) {
-        include("*.jar")
-        include("*.jar.asc")
-        include("*.jar.md5")
-        include("*.jar.sha1")
-    }
-    from(layout.buildDirectory.dir("publications/mavenJava")) {
-        include("*.pom")
-        include("*.pom.asc")
-        include("*.pom.md5")
-        include("*.pom.sha1")
+    // Maven repository layout: com/infoyupay/humandate/humandate-core/1.0.0/
+    val targetDir = "com/infoyupay/humandate/humandate-core/${project.version}"
+
+    into(targetDir) {
+        from(layout.buildDirectory.dir("libs")) {
+            include("*.jar")
+            include("*.jar.asc")
+            include("*.jar.md5")
+            include("*.jar.sha1")
+        }
+        from(layout.buildDirectory.dir("publications/mavenJava")) {
+            include("*.pom")
+            include("*.pom.asc")
+            include("*.pom.md5")
+            include("*.pom.sha1")
+        }
     }
 }
